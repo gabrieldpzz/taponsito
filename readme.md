@@ -1,4 +1,4 @@
-# 🛍️TaponShop - Tienda en Línea
+# 🛍️ TaponShop - Tienda en Línea
 
 **Perolito Shop** es una tienda en línea moderna y funcional desarrollada con PHP, MySQL, Firebase Authentication y Docker. Ofrece una experiencia completa de compra para clientes y herramientas de gestión eficientes para administradores.
 
@@ -28,50 +28,82 @@
 
 ---
 
-## ⚙️ Infraestructura y entorno
+## 🛠️ Funciones generales del sistema
 
-### 🔧 Tecnologías principales
-
-| Componente       | Tecnología                         |
-|------------------|-------------------------------------|
-| Contenedor       | **Docker**                         |
-| Orquestación     | **Docker Compose**                 |
-| Servidor web     | **Apache**                         |
-| Base de datos    | **MariaDB 11.3**                   |
-| Backend          | **PHP 8.2**                        |
-| Autenticación    | **Firebase Authentication**        |
-| Frontend         | HTML, CSS, JavaScript, jQuery      |
-| API de Tracking  | **Node.js + Express**              |
-| Pagos            | **Wompi El Salvador**             |
-
-### 📦 Dependencias PHP (Composer)
-
-- **firebase/php-jwt**: Validación y decodificación de tokens JWT.
-- **guzzlehttp/guzzle**: Cliente HTTP para peticiones (ej. Wompi).
-- **vlucas/phpdotenv**: Manejo de variables de entorno.
-- **monolog/monolog**: Logging.
-- **symfony/***: Paquetes para manejo de consola, HTTP foundation, eventos, etc.
-
-### 📦 Dependencias Node.js (API de seguimiento)
-
-- **express**: Framework web para manejar rutas `/tracking`.
-- **cors**: Middleware para permitir peticiones desde otros orígenes.
-- **ngrok**: Exposición del servidor local a internet.
-- **mysql2/promise**: Cliente MySQL con soporte para promesas.
+| Categoría         | Funcionalidades                                                                 |
+|-------------------|---------------------------------------------------------------------------------|
+| **Infraestructura** | Docker, Apache, PHP 8.2, MariaDB, Node.js, Composer, npm                      |
+| **Autenticación**   | Firebase Authentication (registro, login, logout)                            |
+| **Asistente AI**    | Gemini (sugerencias de productos e interacción contextual)                    |
+| **Pagos**           | Integración con Wompi El Salvador (token + enlaces + webhook)                |
+| **Seguimiento**     | API propia en Node.js para seguimiento de envíos (/tracking)                 |
+| **UI adaptable**    | Estilos CSS separados por página / módulo                                    |
 
 ---
 
-## 📦 Estructura del proyecto
+## 📦 Módulos principales
 
-| Carpeta          | Descripción                                   |
-|------------------|-----------------------------------------------|
-| `/admin`         | Panel de administración                      |
-| `/carrito`       | Carrito, historial, detalle de pedido         |
-| `/productos`     | Catálogo y vista por categorías               |
-| `/includes`      | Conexiones, headers, footers                  |
-| `/assets/css`    | Archivos CSS organizados por módulo           |
-| `/tracking.js`   | API Node.js para seguimiento de envíos        |
-| `/firebase`      | Scripts de autenticación y logout             |
+### 🧾 Carrito y pedidos
+
+| Archivo/Módulo               | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `actions/add_to_cart.php`    | Agrega productos al carrito                                            |
+| `actions/remove_from_cart.php` | Elimina productos del carrito                                         |
+| `actions/apply_coupon.php`   | Aplica cupones de descuento al total del carrito                       |
+| `actions/create_order.php`   | Crea un pedido, aplica cupones, genera enlace Wompi, y redirige al pago|
+| `carrito/index.php`          | Vista principal del carrito del cliente                               |
+| `carrito/checkout.php`       | Formulario de pago y entrega                                           |
+| `carrito/confirmacion.php`   | Página que se muestra tras un pago exitoso                            |
+| `carrito/historial.php`      | Historial de pedidos del cliente                                      |
+| `carrito/generar_factura.php`| Genera un PDF con los datos de la compra                              |
+
+### 📦 Productos
+
+| Archivo/Módulo               | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `productos/index.php`        | Catálogo general de productos                                          |
+| `productos/detalle.php`      | Página de detalle individual del producto                             |
+| `productos/categoria.php`    | Filtro y búsqueda por categoría                                       |
+
+### 🧑‍💼 Administración (Panel admin)
+
+| Archivo                      | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `admin/index.php`            | Panel principal                                                       |
+| `admin/productos.php`        | Gestión de productos (lista)                                          |
+| `admin/nuevo_producto.php`   | Formulario para agregar productos                                      |
+| `admin/editar_producto.php`  | Edición de productos existentes                                       |
+| `admin/pedidos.php`          | Listado y gestión de pedidos                                          |
+| `admin/detalle_pedido.php`   | Ver y editar detalles de pedidos                                      |
+| `admin/cupones.php`          | Gestión de cupones de descuento                                       |
+| `admin/usuarios.php`         | Gestión de usuarios registrados                                       |
+| `admin/actualizar_estado_envio.php` | Cambia estado del envío en pedidos                             |
+| `admin/reportes.php`         | Estadísticas y reportes de ventas                                     |
+| `admin/generar-etiqueta.php` | Generación de etiquetas de envío                                      |
+
+### 💳 Pagos Wompi
+
+| Archivo                      | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `wompi/wompi_token.php`      | Solicita token OAuth2 a Wompi                                          |
+| `wompi/response.php`         | Procesa la respuesta del cliente tras pagar                           |
+| `wompi/webhook.php`          | Webhook para recibir notificaciones de estado desde Wompi             |
+
+### 📦 Seguimiento de pedidos
+
+| Archivo                      | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `taponshop_api/tracking.js`  | API REST para registrar y consultar estado de envíos (/tracking)       |
+| `tracking.php`               | Página pública para rastrear un pedido                                |
+| `admin/actualizar_estado_envio.php` | Actualiza manualmente el estado del envío en el admin           |
+
+### 🧠 Asistente IA Gemini
+
+| Archivo                      | Función                                                                 |
+|------------------------------|-------------------------------------------------------------------------|
+| `gemini/consulta.php`        | Endpoint que recibe preguntas del usuario                              |
+| `gemini/registrar_sugerencia.php` | Guarda sugerencias si el producto no existe                      |
+| `includes/ver_sugerencias.php` | Admin puede revisar lo que buscan los clientes                      |
 
 ---
 
@@ -105,6 +137,22 @@ Incluye gráficos avanzados:
 - Expuesto en el puerto **3306** en Docker.
 - Usuarios configurados correctamente (`root`, `tienda_user`).
 - Permitir conexiones desde `%`.
+
+---
+
+## 🔧 Tecnologías combinadas
+
+- **PHP 8.2**
+- **MariaDB 11.x**
+- **JavaScript (ES6+, Vanilla)**
+- **Firebase Auth**
+- **Node.js 18+ con Express y MySQL**
+- **Composer (Guzzle, JWT, Dotenv, etc.)**
+- **Docker + Docker Compose**
+- **CSS modularizado por página**
+- **API REST privada /tracking**
+- **Wompi API (OAuth2, pagos, webhooks)**
+- **Gemini IA (preguntas y sugerencias)**
 
 ---
 
